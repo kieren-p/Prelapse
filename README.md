@@ -1,14 +1,3 @@
-# Prelapse
-
-A kind, private habit tracker for vaping, alcohol, cannabis, porn, gambling and custom habits. It notices patterns, warns you about tricky days before they happen, and helps you make a small plan.
-
-This is the installable web app (PWA) used for the first 30-day personal trial.
-
-- Everything is saved on your device. Nothing is sent anywhere.
-- Works offline once installed.
-- Back up and restore your data from **Support → Your data**.
-- Reminders are added to your phone's calendar from **Support → Daily check-in reminder** and from each plan.
-
 ## Install
 
 Open the site on your phone, then:
