@@ -49,7 +49,7 @@ a { color: inherit; }
 
 .app { max-width: 480px; margin: 0 auto; min-height: 100%; background: var(--page); color: var(--ink); position: relative; padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px)); }
 .app.stacked { padding-bottom: calc(32px + env(safe-area-inset-bottom, 0px)); }
-.app:not(.sunhome):not(.sunrest):not(.hashead) { padding-top: env(safe-area-inset-top, 0px); }
+
 .app.todaypage { background: var(--panel); }
 .wrap { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
 .col { display: flex; flex-direction: column; gap: 12px; }
@@ -206,7 +206,7 @@ body.sunon::before { display: none; }
 .app.sunrest > * { pointer-events: auto; }
 .app.sunhome .panel { margin-top: 0; min-height: calc(100vh - var(--ph, 372px)); padding-top: 4px; padding-bottom: calc(108px + env(safe-area-inset-bottom, 0px)); }
 .app.sunhome.notabs .panel { padding-bottom: calc(32px + env(safe-area-inset-bottom, 0px)); }
-body.sunon::before { display: block; background: var(--panel); opacity: 0; transition: opacity 0.2s; }
+body.sunon::before { display: block; background: var(--sbar, var(--panel)); opacity: 0; transition: opacity 0.2s; }
 body.sunon.scrolled::before { opacity: 1; }
 #sunscene.open.nos .ss-btns { display: none; }
 .brand { display: flex; align-items: center; gap: 10px; }
@@ -273,6 +273,58 @@ body.sunon.scrolled::before { opacity: 1; }
 .ss-sparks { position: absolute; left: 0; top: 0; width: 120px; height: 120px; pointer-events: none; }
 .ss-sparks span { position: absolute; left: 56px; top: 56px; width: 8px; height: 8px; }
 .ss-sparks i { display: block; width: 8px; height: 8px; border-radius: 50%; animation: pl-spark 0.9s ease-out 2 both; }
+
+/* Sun bar: the sun peeks down from the top of every full-screen page. Tap him to go home. */
+.sbar { position: sticky; top: 0; z-index: 6; background: var(--panel); color: var(--panel-ink); padding-top: env(safe-area-inset-top, 0px); margin-bottom: 30px; }
+.sbar-row { position: relative; z-index: 1; height: 56px; display: flex; align-items: center; justify-content: space-between; padding: 0 max(10px, env(safe-area-inset-left, 0px)); }
+.sbar-l, .sbar-r { width: calc(50% - 58px); display: flex; align-items: center; min-width: 0; gap: 4px; }
+.sbar-r { justify-content: flex-end; text-align: right; }
+.sbar .t { font-weight: 800; font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sbar .ptitle { font-size: 22px; font-weight: 800; letter-spacing: -0.4px; padding-left: 8px; margin: 0; white-space: nowrap; }
+.sbar .iconbtn { color: var(--panel-ink); }
+.sbar-curve { position: absolute; left: 50%; top: 100%; width: 232px; height: 38px; margin: -1px 0 0 -116px; fill: var(--panel); pointer-events: none; }
+.minisun { position: absolute; z-index: 2; left: 50%; top: env(safe-area-inset-top, 0px); width: 96px; height: 96px; margin: -48px 0 0 -48px; border-radius: 50%; background: #F2C462; box-shadow: 0 0 0 9px rgba(242, 196, 98, 0.16), 0 0 0 20px rgba(242, 196, 98, 0.07); animation: pl-peek 5s ease-in-out infinite; }
+.minisun > span { position: absolute; }
+.ms-hl { left: 18px; top: 50px; width: 34px; height: 22px; border-radius: 50%; background: #F6D07C; }
+.ms-eyes { left: 0; right: 0; top: 58px; display: flex; justify-content: center; gap: 20px; transform: translateY(var(--mly, 0px)) translateX(var(--mlx, 0px)); transition: transform 0.2s; }
+.ms-eyes i { width: 10px; height: 10px; border-radius: 50%; background: #2F4F45; animation: pl-blink 5s infinite; }
+.ms-smile { left: 40px; top: 74px; width: 16px; height: 8px; box-sizing: border-box; border: 3px solid #2F4F45; border-top: none; border-radius: 0 0 16px 16px; }
+.ms-cheek { top: 70px; width: 12px; height: 7px; border-radius: 50%; background: #D9893B; opacity: 0.55; }
+@keyframes pl-peek { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(3px); } }
+.minisun:active { transform: scale(0.95); }
+.sbar.floating { position: fixed; left: 0; right: 0; max-width: 480px; margin: 0 auto; opacity: 0; transform: translateY(-120%); transition: opacity 0.25s, transform 0.35s cubic-bezier(0.34, 1.2, 0.64, 1); pointer-events: none !important; }
+body.scrolled .sbar.floating { opacity: 1; transform: none; pointer-events: auto !important; }
+.pbody { position: relative; }
+.psub { margin: -14px 0 4px; }
+/* Dashboard */
+.dash-hero { background: var(--panel); color: var(--panel-ink); border-radius: 26px; padding: 18px; display: flex; gap: 16px; align-items: center; }
+.dash-hero .k { color: var(--panel-muted); font-size: 13px; }
+.dash-hero .big { font-size: 15px; font-weight: 800; }
+.tick { font-size: 22px; font-weight: 800; letter-spacing: -0.3px; font-variant-numeric: tabular-nums; color: #F2C462; line-height: 1.15; }
+.pill { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 800; background: rgba(242, 196, 98, 0.18); color: #F2C462; }
+.tile.t-wattle { background: rgba(242, 196, 98, 0.26); }
+.tile.t-sage { background: rgba(169, 194, 161, 0.32); }
+.tile.t-ochre { background: rgba(217, 137, 59, 0.18); }
+.tile.t-terra { background: rgba(185, 91, 58, 0.14); }
+.tile .v.ink { color: var(--ink); }
+.cal { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 5px; }
+.cal .c { aspect-ratio: 1; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: var(--ink); }
+.cal .c.clear { background: var(--sage); color: #1E302B; }
+.cal .c.rode { background: #F2C462; color: #1E302B; }
+.cal .c.used { background: #D9893B; color: #1E302B; }
+.cal .c.used::after { content: ""; width: 5px; height: 5px; border-radius: 50%; background: #1E302B; margin-left: 2px; }
+.cal .c.pre { background: var(--tint); color: var(--muted); opacity: 0.6; }
+.cal .c.today { box-shadow: inset 0 0 0 2px var(--ink); }
+.cal .h { font-size: 10px; text-align: center; color: var(--muted); font-weight: 700; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 12px; color: var(--muted); }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.legend i { width: 12px; height: 12px; border-radius: 4px; display: inline-block; }
+.hbar { display: grid; grid-template-columns: 92px 1fr 28px; gap: 10px; align-items: center; font-size: 14px; }
+.hbar .tr { height: 10px; border-radius: 999px; background: var(--tint); overflow: hidden; }
+.hbar .fl { height: 10px; border-radius: 999px; background: var(--euc); }
+.chart-note { font-size: 13px; color: var(--muted); }
+.chart-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.chart-head .val { font-weight: 800; font-size: 15px; }
 .phead { position: relative; height: calc(166px + env(safe-area-inset-top, 0px)); overflow: hidden; }
 .phead svg { position: absolute; left: 0; bottom: 0; width: 100%; height: 96px; }
 .phead .wrap { position: relative; padding-top: calc(14px + env(safe-area-inset-top, 0px)); }
@@ -371,7 +423,6 @@ body.sunon.scrolled::before { opacity: 1; }
 <div class="ss-bubblewrap"><div class="ss-bubble" id="ss-bubble" aria-live="polite"><span class="ss-tail"></span><span class="ss-msg" id="ss-msg"></span></div></div>
 </div>
 <div class="ss-head"><h1 id="ss-greet"></h1><div class="ss-btns"><button data-a="themes" aria-label="Themes"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 18 L9 9 L13 15 L16 11 L21 18 Z"></path><circle cx="17" cy="6" r="2"></circle></svg></button><button data-a="nightToggle" id="ss-night" aria-label="Switch to night"></button></div></div>
-<button class="ss-hint" data-a="sunTap">Tap the sun to check in</button>
 </div>
 <div id="app" class="app day"></div>
 
@@ -676,7 +727,8 @@ function freshState(name) { return { v: 1, demo: false, name: name || '', habits
 function habit(id) { for (var i = 0; i < S.habits.length; i++) if (S.habits[i].id === id) return S.habits[i]; return null; }
 function evs(hid, kind, since) { return S.events.filter(function (e) { return (!hid || e.h === hid) && (!kind || e.k === kind) && (!since || e.t >= since); }); }
 function lastUse(h) { var u = evs(h.id, 'use'); return u.length ? u[u.length - 1].t : null; }
-function daysFree(h) { var l = lastUse(h); var from = l != null ? l : h.since; return Math.max(0, Math.floor((sod(now()) - sod(from)) / DAY)); }
+function freeFrom(h) { var l = lastUse(h); return l != null && l > h.since ? l : h.since; }
+function daysFree(h) { return Math.max(0, Math.floor((now() - freeFrom(h)) / DAY)); }
 function bestStreak(h) {
   var uses = evs(h.id, 'use').map(function (e) { return sod(e.t); }); var pts = [sod(h.since)].concat(uses).concat([sod(now())]);
   var best = 0; for (var i = 1; i < pts.length; i++) best = Math.max(best, Math.floor((pts[i] - pts[i - 1]) / DAY)); return best;
@@ -826,6 +878,18 @@ front: [
 thumb: ["far", "M0 30 Q14 12 28 30 H58 Q72 10 86 30 V56 H0 Z", "ridge", "M0 36 Q14 22 28 29 Q43 31 58 29 Q72 22 86 36 V56 H0 Z"] }
   ];
 })();
+SCENES = SCENES.filter(function (d) { return ['gum', 'dune', 'tundra', 'coast'].indexOf(d.id) >= 0; });
+var THEME_UI = {
+  gum: { d: { page: '#F5EFE3', card: '#FFFDF8', tint: '#E8EFE4', line: '#E6DDCB', panel: '#2F4F45', deep: '#4C7864', euc: '#5E8C76', sage: '#A9C2A1', tab: '#263F38', muted: '#56675F', ink: '#1E302B' },
+    n: { page: '#142824', card: '#1B332E', tint: '#22403A', line: '#2A453E', panel: '#1B332E', deep: '#4C7864', euc: '#7FA893', sage: '#A9C2A1', tab: '#12241F', muted: '#B9CBBF', ink: '#F5EFE3' } },
+  dune: { d: { page: '#F8F0E3', card: '#FFFBF4', tint: '#F5E6CF', line: '#EADBC4', panel: '#5C3A20', deep: '#A05824', euc: '#C4742C', sage: '#E6B678', tab: '#4A2E19', muted: '#6E5A48', ink: '#2E2014' },
+    n: { page: '#1D1712', card: '#2A2119', tint: '#3A2C1F', line: '#3E3023', panel: '#2A2119', deep: '#A05824', euc: '#D9A066', sage: '#E6B678', tab: '#15100C', muted: '#CDB89C', ink: '#F5EFE3' } },
+  tundra: { d: { page: '#F2F5F7', card: '#FFFFFF', tint: '#E3ECF1', line: '#D9E3E9', panel: '#2F4752', deep: '#46677A', euc: '#5F8195', sage: '#AFC4D0', tab: '#253A44', muted: '#556A76', ink: '#1C2C33' },
+    n: { page: '#111A21', card: '#1A2731', tint: '#22323E', line: '#283946', panel: '#1A2731', deep: '#46677A', euc: '#8FAABB', sage: '#AFC4D0', tab: '#0C141A', muted: '#AEBEC8', ink: '#F2F5F7' } },
+  coast: { d: { page: '#F7F2E8', card: '#FFFDF8', tint: '#DDEFEE', line: '#E6DFCF', panel: '#1F5C66', deep: '#2B7680', euc: '#2E8C96', sage: '#9CC7C0', tab: '#174851', muted: '#4F6467', ink: '#163338' },
+    n: { page: '#0D1E29', card: '#15303D', tint: '#1B3A48', line: '#21414F', panel: '#15303D', deep: '#2B7680', euc: '#6FB9BF', sage: '#9CC7C0', tab: '#0A1720', muted: '#A9C4C6', ink: '#F5EFE3' } }
+};
+function themeTokens() { var t = THEME_UI[scenePick().id] || THEME_UI.gum; return t[isNight() ? 'n' : 'd']; }
 function scenePick() { var id = S && S.theme || 'gum'; for (var i = 0; i < SCENES.length; i++) if (SCENES[i].id === id) return SCENES[i]; return SCENES[0]; }
 
 var SUN = { mood: 'idle', msg: '', hold: 0, tip: 0, pop: 0, px: 0, key: '', shown: false, open: false, t: 0 };
@@ -942,18 +1006,14 @@ window.addEventListener('pointermove', function (e) {
 window.addEventListener('resize', function () { if (SUN.shown) sunLayout(); });
 
 function pageHead(title, sub) {
-  var T = scenePick(), n = isNight() ? 1 : 0, sky = T.pal.sky[n];
-  function lay(a) { return '<path d="' + a[2] + '" fill="' + T.pal[a[0]][n] + '"/>'; }
-  var front = T.front.filter(function (a) { return a[1] <= 12; });
-  return '<header class="phead' + (n ? ' night' : '') + '" style="background:' + sky + ';color:' + (n ? '#F5EFE3' : '#2F4F45') + '"><svg viewBox="40 150 390 96" preserveAspectRatio="xMidYMax slice" aria-hidden="true">' + T.behind.map(lay).join('') +
-    '<circle cx="235" cy="196" r="44" fill="#F2C462"/><circle cx="222" cy="182" r="22" fill="#F6D07C"/>' + front.map(lay).join('') + '</svg><div class="wrap"><h1 class="hero">' + esc(title) + '</h1>' + (sub ? '<div class="sub">' + esc(sub) + '</div>' : '') + '</div></header>';
+  return sunBar('<h1 class="ptitle">' + esc(title) + '</h1>', '') + (sub ? '<div class="wrap small psub">' + esc(sub) + '</div>' : '');
 }
 function vThemes() {
   var cur = scenePick().id;
   return '<div class="thsheet" role="dialog" aria-label="Themes"><div class="row" style="justify-content:space-between"><div><h2>Themes</h2><div class="small" style="color:#3E5A50">Tap a scene to see it up top.</div></div><button class="btn btn-sm" style="background:#E6DCC6;color:#2F4F45" data-a="themesDone">Done</button></div><div class="thgrid">' +
     SCENES.map(function (d) {
       return '<button data-a="pickTheme" data-k="' + d.id + '" class="' + (d.id === cur ? 'on' : '') + '" aria-pressed="' + (d.id === cur) + '"><span class="thumb" style="background:' + d.pal.sky[0] + '"><span style="background:' + d.pal[d.thumb[0]][0] + ';clip-path:path(\'' + d.thumb[1] + '\')"></span><span style="left:32px;top:18px;width:22px;height:22px;border-radius:50%;background:#F2C462"></span><span style="background:' + d.pal[d.thumb[2]][0] + ';clip-path:path(\'' + d.thumb[3] + '\')"></span><span style="top:44px;height:12px;background:' + d.pal.front[0] + '"></span></span><span style="font-size:13px;font-weight:700;line-height:1.1">' + d.name + '</span><span class="thtag" style="background:' + (d.free ? '#A9C2A1' : '#F2C462') + '">' + (d.free ? 'Free' : 'Plus') + '</span></button>';
-    }).join('') + '</div><div class="tiny" style="text-align:center;color:#3E5A50">Gum and Gold is free forever. Plus scenes are unlocked while you test Prelapse.</div></div>';
+    }).join('') + '</div><div class="tiny" style="text-align:center;color:#3E5A50">Your scene colours the whole app. Gum and Gold is free forever; the others are unlocked while you test.</div></div>';
 }
 
 /* ---------- landscape ---------- */
@@ -999,7 +1059,11 @@ function toast(msg) { UI.toast = msg; render(); setTimeout(function () { if (UI.
 
 /* ---------- shared bits ---------- */
 function riskTag(f) { return '<span class="tag risk-' + f.level + '">' + f.word + '</span>'; }
-function topbar(title, mode) { return '<div class="topbar wrap"><button class="iconbtn" data-a="' + (mode === 'close' ? 'close' : 'back') + '" aria-label="' + (mode === 'close' ? 'Close' : 'Back') + '">' + ic(mode === 'close' ? 'close' : 'back', 24, 2) + '</button><div class="t">' + esc(title || '') + '</div><span style="width:44px"></span></div>'; }
+function sunBar(left, right, extra) {
+  return '<header class="sbar' + (extra || '') + '"><div class="sbar-row"><div class="sbar-l">' + (left || '') + '</div><div class="sbar-r">' + (right || '') + '</div></div><svg class="sbar-curve" viewBox="0 0 232 38" preserveAspectRatio="none" aria-hidden="true"><path d="M0 0 H232 C186 0 176 38 116 38 C56 38 46 0 0 0 Z"/></svg>' +
+    '<button class="minisun" data-a="goHome" aria-label="Back to your sun"><span class="ms-hl"></span><span class="ms-cheek" style="left:22px"></span><span class="ms-cheek" style="left:62px"></span><span class="ms-eyes"><i></i><i></i></span><span class="ms-smile"></span></button></header>';
+}
+function topbar(title, mode) { return sunBar('<button class="iconbtn" data-a="' + (mode === 'close' ? 'close' : 'back') + '" aria-label="' + (mode === 'close' ? 'Close' : 'Back') + '">' + ic(mode === 'close' ? 'close' : 'back', 24, 2) + '</button>', '<div class="t">' + esc(title || '') + '</div>'); }
 function seg(name, opts, sel) { return '<div class="seg" role="group">' + opts.map(function (o, i) { return '<button data-a="pick" data-k="' + name + '" data-v="' + i + '" class="' + (sel === i ? 'on' : '') + '" aria-pressed="' + (sel === i) + '">' + esc(o) + '</button>'; }).join('') + '</div>'; }
 function chips(name, opts, selected, multi) { return '<div class="wrapflex">' + opts.map(function (o) { var on = multi ? (selected || []).indexOf(o) >= 0 : selected === o; return '<button class="chip' + (on ? ' on' : '') + '" data-a="' + (multi ? 'toggle' : 'pickv') + '" data-k="' + name + '" data-v="' + esc(o) + '" aria-pressed="' + on + '">' + esc(o) + '</button>'; }).join('') + '</div>'; }
 function bars(vals, labels, hi, h) {
@@ -1022,7 +1086,7 @@ function vToday() {
   var greet = h < 12 ? 'Morning' : h < 17 ? 'Afternoon' : 'Evening';
   var tomorrow = sod(now()) + DAY, todayF = topForecast(sod(now())), tmF = topForecast(tomorrow);
   var plan = S.plans[dkey(now())];
-  var out = '<section class="panel wrap' + (UI.rise ? ' rise' : '') + '">' + (S.habits.length ? '<button class="ss-handle" data-a="sunTap" aria-label="Hide check-in"><span></span></button>' : '<div style="height:16px"></div>') + '<div class="col">';
+  var out = sunBar('<h1 class="ptitle">' + (night ? 'Tonight' : 'Today') + '</h1>', '', ' floating') + '<section class="panel wrap' + (UI.rise ? ' rise' : '') + '">' + (S.habits.length ? '<button class="ss-handle" data-a="sunTap" aria-label="Hide check-in"><span></span></button>' : '<div style="height:16px"></div>') + '<div class="col">';
   UI.rise = false;
   if (!S.habits.length) {
     out += '<div class="glass"><div class="heading">Add your first habit</div><div class="small">Pick from vaping, cigarettes, alcohol, cannabis, porn or gambling, or make your own.</div></div><button class="btn btn-wattle" data-a="addHabit">' + ic('plus', 20, 2.2) + 'Add a habit</button></div></section>';
@@ -1088,7 +1152,7 @@ function vProgress() {
   S.habits.forEach(function (h) {
     var T = TYPES[h.type], df = daysFree(h), g = nextGoal(df), saved = moneySaved(h); totalSaved += saved;
     var line = h.goal === 'quit' ? df + ' days · next goal ' + g : (h.type === 'alcohol' ? sumAmt(evs(h.id, 'use', weekStart())) + ' drinks this week' : evs(h.id, 'use', weekStart()).length + ' times this week');
-    out += '<button class="card row" style="gap:14px;text-align:left" data-a="habit" data-h="' + h.id + '">' + (h.goal === 'quit' ? ring(df, g) : '<span class="hicon" style="width:64px;height:64px;border-radius:50%">' + ic(T.icon, 28) + '</span>') + '<span class="grow"><span class="heading" style="display:block">' + esc(h.name) + '</span><span class="small" style="display:block">' + line + '</span>' + (saved ? '<span class="tiny" style="display:block">About ' + money(saved) + ' not spent</span>' : '') + '</span><span style="text-align:right"><span class="tiny" style="display:block">BEST</span><span style="font-weight:800" class="num">' + bestStreak(h) + ' d</span></span></button>';
+    out += '<button class="card row" style="gap:14px;text-align:left" data-a="habit" data-h="' + h.id + '">' + (h.goal === 'quit' ? ring(df, g) : '<span class="hicon" style="width:64px;height:64px;border-radius:50%">' + ic(T.icon, 28) + '</span>') + '<span class="grow"><span class="heading" style="display:block">' + esc(h.name) + '</span><span class="small" style="display:block">' + line + '</span>' + (saved ? '<span class="tiny" style="display:block">About ' + money(saved) + ' not spent</span>' : '') + '</span><span style="text-align:right"><span class="tiny" style="display:block">BEST</span><span style="font-weight:800" class="num">' + bestStreak(h) + ' d</span></span>' + ic('chev', 18, 2) + '</button>';
   });
   var strip = '', labels = weekLabels();
   for (var i = 6; i >= 0; i--) { var d = sod(now()) - i * DAY, k = dkey(d), rode = S.events.some(function (e) { return e.k === 'craving' && e.o === 'rode' && sod(e.t) === d; }); var bg = i === 0 ? 'background:var(--card);border:2px dashed var(--sage)' : rode ? 'background:var(--wattle)' : S.checkins[k] ? 'background:var(--deep)' : 'background:var(--line)'; strip += '<div style="height:30px;border-radius:9px;' + bg + '"></div>'; }
@@ -1124,8 +1188,9 @@ function vHabit(d) {
   var h = habit(d.h); if (!h) return vMissing();
   var T = TYPES[h.type], df = daysFree(h), wk = weekStart(), useWk = evs(h.id, 'use', wk), cravWk = evs(h.id, 'craving', wk);
   var out = topbar(h.name) + '<div class="wrap col sheet-pad">';
-  out += '<div class="row" style="gap:12px"><span class="hicon" style="width:52px;height:52px;border-radius:16px">' + ic(T.icon, 28) + '</span><div class="grow"><h1 class="title">' + esc(h.name) + '</h1><div class="small">' + (h.goal === 'quit' ? 'Quitting' : 'Cutting back') + ' · tracking since ' + shortDate(h.since) + '</div></div></div>';
-  out += '<div class="tiles">' + habitTiles(h, df, useWk, cravWk).map(function (t) { return '<div class="tile"><div class="v ' + (t[2] || 'deep') + '">' + t[0] + '</div><div class="k">' + t[1] + '</div></div>'; }).join('') + '</div>';
+  out += dashHero(h, df);
+  var tileTint = ['t-wattle', 't-sage', 't-ochre'];
+  out += '<div class="tiles">' + habitTiles(h, df, useWk, cravWk).map(function (t, i) { return '<div class="tile ' + tileTint[i % 3] + '"><div class="v ink">' + t[0] + '</div><div class="k">' + t[1] + '</div></div>'; }).join('') + '</div>';
   out += '<button class="btn btn-wattle" data-a="craving" data-h="' + h.id + '">' + ic('wave', 20, 2.2) + "I'm having a craving</button>";
   out += '<div class="row"><button class="btn btn-outline btn-sm grow" data-a="logUse" data-h="' + h.id + '">' + ic('edit', 18, 2) + 'Log ' + (h.goal === 'quit' ? 'a slip' : 'use') + '</button><button class="btn btn-outline btn-sm grow" data-a="addNote" data-h="' + h.id + '">' + ic('note', 18, 2) + 'Add a note</button></div>';
   out += special(h);
@@ -1134,7 +1199,7 @@ function vHabit(d) {
   var daily = h.type === 'alcohol' || h.type === 'cannabis' || h.type === 'gambling' ? perDay(h.id, 'use', 14, 'a') : perDay(h.id, 'craving', 14);
   var chartTitle = { smoking: 'Cravings, last 14 days', social: '', food: '', alcohol: 'Standard drinks, last 14 days', cannabis: 'Grams, last 14 days', gambling: 'Money bet, last 14 days', vape: 'Cravings, last 14 days', porn: 'Urges, last 14 days', custom: 'Cravings, last 14 days' }[h.type];
   var lab = []; for (var i = 13; i >= 0; i--) lab.push(i % 2 === 0 ? DOW1[new Date(sod(now()) - i * DAY).getDay()] : '');
-  out += '<div class="card col"><div class="label">' + chartTitle + '</div>' + bars(daily, lab, function (i) { return i === 13; }, 90) + '</div>';
+  out += dashCalendar(h) + dashTrend(h, chartTitle) + dashHours(h) + dashTriggers(h);
   var notes = S.notes.filter(function (n) { return n.h === h.id; }).sort(function (a, b) { return b.t - a.t; });
   out += '<div class="card col"><div class="row" style="justify-content:space-between"><span class="label">Notes</span><button class="btn-text" style="min-height:32px" data-a="addNote" data-h="' + h.id + '">Add</button></div>' + (notes.length ? notes.slice(0, 5).map(function (n) { return '<div class="note"><div class="tiny">' + shortDate(n.t) + '</div><div>' + esc(n.text) + '</div></div>'; }).join('') : '<div class="small">Write down what worked and what did not. Only you see these.</div>') + '</div>';
   var tips = coachPick(h.type, new Date().getHours(), [], 4);
@@ -1142,10 +1207,79 @@ function vHabit(d) {
   out += '<div class="safety col' + (T.safety.strong ? ' strong' : '') + '" style="gap:6px"><div class="row" style="gap:8px;font-weight:800">' + ic('shield', 20, 2) + esc(T.safety.title) + '</div><div class="small" style="color:var(--ink)">' + esc(T.safety.body) + '</div></div>';
   out += '<div class="card" style="padding-top:8px;padding-bottom:8px">' + T.lines.map(lineCard).join('') + '</div>';
   out += '<div class="card col"><div class="label">Settings</div><div class="row"><span class="grow">Goal</span></div>' + seg('goal', ['Quit', 'Cut back'], h.goal === 'quit' ? 0 : 1) +
-    '<label class="small" for="since-' + h.id + '">' + (h.goal === 'quit' ? 'Day one was' : 'Started on') + '</label><input class="field" type="date" id="since-' + h.id + '" max="' + isoDay(now()) + '" value="' + isoDay(h.since) + '" data-a="since">' +
+    '<label class="small" for="since-' + h.id + '">' + (h.goal === 'quit' ? 'Day one began' : 'Started') + '</label><div class="row"><input class="field" style="flex:1.35" type="date" id="since-' + h.id + '" max="' + isoDay(now()) + '" value="' + isoDay(h.since) + '" data-a="since" data-h="' + h.id + '"><input class="field" style="flex:1" type="time" id="sincet-' + h.id + '" value="' + hhmm(h.since) + '" data-a="since" data-h="' + h.id + '" aria-label="Time"></div>' + (lastUse(h) != null && lastUse(h) > h.since ? '<div class="tiny">Your count runs from your last logged slip, ' + fullWhen(lastUse(h)) + '.</div>' : '') +
     (T.costLabel ? '<label class="small" for="cost-' + h.id + '">' + T.costLabel + ' (A$)</label><input class="field num" id="cost-' + h.id + '" inputmode="decimal" value="' + (h.cost || '') + '" data-a="cost">' : '') +
     (UI.confirmRemove === h.id ? '<div class="small" style="font-weight:800">Remove ' + esc(h.name) + ' and its history?</div><div class="row"><button class="btn btn-outline btn-sm grow" data-a="cancelRemove">Keep it</button><button class="btn btn-deep btn-sm grow" data-a="doRemove" data-h="' + h.id + '">Remove</button></div>' : '<button class="btn-text" data-a="askRemove" data-h="' + h.id + '" style="color:var(--muted)">Remove this habit</button>') + '</div>';
   return out + '</div>';
+}
+/* ---------- per-habit dashboard pieces ---------- */
+function dashHero(h, df) {
+  var T = TYPES[h.type], from = freeFrom(h);
+  if (h.goal === 'quit') {
+    var g = nextGoal(df), size = 128, r = 54, c = 2 * Math.PI * r, p = Math.min(1, (now() - from) / (g * DAY));
+    var ringSvg = '<div style="position:relative;width:' + size + 'px;height:' + size + 'px;flex-shrink:0"><svg width="' + size + '" height="' + size + '" viewBox="0 0 128 128" aria-hidden="true"><circle cx="64" cy="64" r="' + r + '" fill="none" stroke="rgba(245,239,227,0.14)" stroke-width="12"/><circle cx="64" cy="64" r="' + r + '" fill="none" stroke="#F2C462" stroke-width="12" stroke-linecap="round" stroke-dasharray="' + (c * p).toFixed(1) + ' ' + c.toFixed(1) + '" transform="rotate(-90 64 64)"/></svg><div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center"><span class="num" style="font-size:40px;font-weight:800;line-height:1">' + df + '</span><span class="k">' + (df === 1 ? 'day' : 'days') + ' ' + T.free + '</span></div></div>';
+    return '<div class="dash-hero">' + ringSvg + '<div class="col grow" style="gap:6px;min-width:0"><span class="k">Time ' + T.free + '</span><span class="tick" data-from="' + from + '">' + fmtSpan(now() - from) + '</span><span class="k">since ' + fullWhen(from) + '</span><span class="pill">' + ic('star', 14, 2.4) + (g - df) + (g - df === 1 ? ' day' : ' days') + ' to ' + g + '</span></div></div>';
+  }
+  var wk = evs(h.id, 'use', sod(now()) - 6 * DAY), prev = evs(h.id, 'use', sod(now()) - 13 * DAY).filter(function (e) { return e.t < sod(now()) - 6 * DAY; });
+  var amt = h.type === 'alcohol' || h.type === 'cannabis' || h.type === 'gambling', a = amt ? sumAmt(wk) : wk.length, b = amt ? sumAmt(prev) : prev.length, diff = Math.round((a - b) * 100) / 100;
+  var unit = h.type === 'alcohol' ? 'standard drinks' : h.type === 'cannabis' ? 'grams' : h.type === 'gambling' ? 'dollars bet' : 'times';
+  return '<div class="dash-hero"><div class="col grow" style="gap:6px"><span class="k">Last 7 days</span><span class="num" style="font-size:44px;font-weight:800;line-height:1">' + a + '</span><span class="k">' + unit + '</span><span class="pill">' + (diff < 0 ? ic('down', 14, 2.4) + Math.abs(diff) + ' fewer than the week before' : diff > 0 ? Math.abs(diff) + ' more than the week before' : 'Same as the week before') + '</span><span class="k">Cutting back since ' + fullWhen(h.since) + '</span></div></div>';
+}
+function dayStatus(h, d) {
+  if (d + DAY <= sod(h.since)) return 'pre';
+  if (d > now()) return 'pre';
+  var list = S.events.filter(function (e) { return e.h === h.id && e.t >= d && e.t < d + DAY; });
+  if (list.some(function (e) { return e.k === 'use'; })) return 'used';
+  if (list.some(function (e) { return e.k === 'craving' && e.o === 'rode'; })) return 'rode';
+  return 'clear';
+}
+function dashCalendar(h) {
+  var today = sod(now()), dow = (new Date(today).getDay() + 6) % 7, start = today - (dow + 28) * DAY, cells = '', counts = { clear: 0, rode: 0, used: 0 };
+  ['M', 'T', 'W', 'T', 'F', 'S', 'S'].forEach(function (l) { cells += '<span class="h">' + l + '</span>'; });
+  for (var i = 0; i < 35; i++) {
+    var d = start + i * DAY, st = d > today ? 'future' : dayStatus(h, d), lab = shortDate(d);
+    if (counts[st] != null) counts[st]++;
+    var word = { clear: h.goal === 'quit' ? 'clear day' : 'no use', rode: 'rode out a craving', used: h.goal === 'quit' ? 'a slip, and you kept going' : 'used', pre: 'before tracking', future: '' }[st];
+    cells += st === 'future' ? '<span></span>' : '<button class="c ' + st + (d === today ? ' today' : '') + '" data-a="tip" data-tip="' + esc(lab + ': ' + word) + '" aria-label="' + esc(lab + ', ' + word) + '">' + new Date(d).getDate() + '</button>';
+  }
+  return '<div class="card col"><div class="chart-head"><span class="label">Last 5 weeks</span><span class="val">' + counts.clear + ' clear · ' + counts.rode + ' ridden</span></div><div class="cal">' + cells + '</div><div class="legend"><span><i style="background:var(--sage)"></i>' + (h.goal === 'quit' ? 'Clear day' : 'No use') + '</span><span><i style="background:#F2C462"></i>Rode out a craving</span><span><i style="background:#D9893B"></i>' + (h.goal === 'quit' ? 'Slip (dot)' : 'Used (dot)') + '</span></div><div class="chart-note">Tap a day for details. Slips are part of the road, not the end of it.</div></div>';
+}
+function dashTrend(h, title) {
+  var n = Math.max(2, Math.min(8, Math.ceil((sod(now()) + DAY - sod(h.since)) / (7 * DAY)))), amt = h.type === 'alcohol' || h.type === 'cannabis' || h.type === 'gambling', kind = amt ? 'use' : 'craving', vals = [], labs = [];
+  for (var i = n - 1; i >= 0; i--) {
+    var end = sod(now()) + DAY - i * 7 * DAY, st = end - 7 * DAY, list = S.events.filter(function (e) { return e.h === h.id && e.k === kind && e.t >= st && e.t < end; });
+    vals.push(amt ? Math.round(sumAmt(list) * 10) / 10 : list.length); labs.push(i === 0 ? 'This wk' : new Date(st).getDate() + ' ' + MON[new Date(st).getMonth()]);
+  }
+  var W = 320, H = 120, pl = 6, pr = 6, pt = 16, pb = 6, max = Math.max.apply(null, vals.concat([1]));
+  var x = function (i) { return pl + i * (W - pl - pr) / (n - 1); }, y = function (v) { return pt + (H - pt - pb) * (1 - v / max); };
+  var line = vals.map(function (v, i) { return (i ? 'L' : 'M') + x(i).toFixed(1) + ' ' + y(v).toFixed(1); }).join(' ');
+  var area = line + ' L' + x(n - 1).toFixed(1) + ' ' + H + ' L' + x(0).toFixed(1) + ' ' + H + ' Z';
+  var dots = vals.map(function (v, i) { var last = i === n - 1; return '<circle cx="' + x(i).toFixed(1) + '" cy="' + y(v).toFixed(1) + '" r="' + (last ? 5.5 : 4) + '" style="fill:' + (last ? '#F2C462' : 'var(--euc)') + ';stroke:var(--card)" stroke-width="2"><title>' + labs[i] + ': ' + v + '</title></circle>'; }).join('');
+  var grid = [0.5, 1].map(function (f) { return '<line x1="0" x2="' + W + '" y1="' + y(max * f).toFixed(1) + '" y2="' + y(max * f).toFixed(1) + '" style="stroke:var(--line)" stroke-width="1" stroke-dasharray="3 4"/>'; }).join('');
+  var hits = vals.map(function (v, i) { return '<rect x="' + (x(i) - 18).toFixed(1) + '" y="0" width="36" height="' + H + '" fill="transparent" data-a="tip" data-tip="' + esc(labs[i] + ': ' + v + (amt ? '' : v === 1 ? ' craving' : ' cravings')) + '"/>'; }).join('');
+  var first = vals[0], last = vals[n - 1], ago = n === 8 ? ' eight weeks ago.' : ' when you started.', trend = last < first ? 'Down from ' + first + ago : last > first ? 'Up from ' + first + ago + ' Busy weeks happen.' : 'Holding steady.';
+  var rode = ridden(h.id, sod(now()) - 55 * DAY), crav = evs(h.id, 'craving', sod(now()) - 55 * DAY).length;
+  return '<div class="card col"><div class="chart-head"><span class="label">' + esc(title.replace('last 14 days', 'per week')) + '</span><span class="val">' + last + ' this week</span></div>' +
+    '<svg viewBox="0 0 ' + W + ' ' + H + '" width="100%" height="' + H + '" preserveAspectRatio="none" role="img" aria-label="' + esc(title) + ' over ' + n + ' weeks">' + grid + '<path d="' + area + '" style="fill:var(--euc)" opacity="0.14"/><path d="' + line + '" fill="none" style="stroke:var(--euc)" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>' + dots + hits + '</svg>' +
+    '<div class="row tiny" style="justify-content:space-between"><span>' + labs[0] + '</span><span>' + labs[n - 1] + '</span></div><div class="chart-note">' + trend + (crav ? ' You rode out ' + Math.round(100 * rode / crav) + '% of cravings in that time.' : '') + '</div></div>';
+}
+function dashHours(h) {
+  var b = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], since = sod(now()) - 29 * DAY;
+  S.events.forEach(function (e) { if (e.h === h.id && (e.k === 'craving' || e.k === 'use') && e.t >= since) b[Math.floor(new Date(e.t).getHours() / 2)]++; });
+  var tot = b.reduce(function (a, v) { return a + v; }, 0); if (!tot) return '';
+  var max = Math.max.apply(null, b), pk = b.indexOf(max), W = 320, H = 96, gap = 4, bw = (W - gap * 11) / 12, out = '';
+  b.forEach(function (v, i) {
+    var bh = v ? Math.max(4, (v / max) * (H - 18)) : 2, xx = i * (bw + gap);
+    out += '<rect x="' + xx.toFixed(1) + '" y="' + (H - bh).toFixed(1) + '" width="' + bw.toFixed(1) + '" height="' + bh.toFixed(1) + '" rx="4" style="fill:' + (i === pk ? '#F2C462' : 'var(--euc)') + '" opacity="' + (i === pk ? 1 : 0.35 + 0.65 * v / max) + '" data-a="tip" data-tip="' + esc(hourLabel(i * 2) + ' to ' + hourLabel(i * 2 + 2) + ': ' + v) + '"><title>' + hourLabel(i * 2) + '–' + hourLabel(i * 2 + 2) + ': ' + v + '</title></rect>';
+    if (i === pk) out += '<text x="' + (xx + bw / 2).toFixed(1) + '" y="' + (H - bh - 5).toFixed(1) + '" text-anchor="middle" font-size="11" font-weight="800" style="fill:var(--ink)">' + v + '</text>';
+  });
+  return '<div class="card col"><div class="chart-head"><span class="label">When it hits</span><span class="val">Peak ' + hourLabel(pk * 2) + '–' + hourLabel(pk * 2 + 2) + '</span></div><svg viewBox="0 0 ' + W + ' ' + H + '" width="100%" height="' + H + '" preserveAspectRatio="none" role="img" aria-label="Cravings by time of day">' + out + '</svg><div class="row tiny" style="justify-content:space-between"><span>12 am</span><span>6 am</span><span>12 pm</span><span>6 pm</span><span>12 am</span></div><div class="chart-note">Last 30 days, in 2-hour blocks. Plan for the gold one.</div></div>';
+}
+function dashTriggers(h) {
+  var c = {}; S.events.forEach(function (e) { if (e.h === h.id && e.t >= sod(now()) - 29 * DAY) (e.tr || []).forEach(function (t) { c[t] = (c[t] || 0) + 1; }); });
+  var top = Object.keys(c).sort(function (a, b) { return c[b] - c[a]; }).slice(0, 5); if (!top.length) return '';
+  var max = c[top[0]];
+  return '<div class="card col"><div class="chart-head"><span class="label">Top triggers</span><span class="val">Last 30 days</span></div>' + top.map(function (t) { return '<div class="hbar"><span style="font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + esc(t) + '</span><span class="tr"><span class="fl" style="display:block;width:' + Math.round(100 * c[t] / max) + '%"></span></span><span class="num" style="font-weight:800;text-align:right">' + c[t] + '</span></div>'; }).join('') + '</div>';
 }
 function habitTiles(h, df, useWk, cravWk) {
   var rodeWk = cravWk.filter(function (e) { return e.o === 'rode'; }).length, saved = moneySaved(h);
@@ -1310,6 +1444,10 @@ function vDream(d) {
   return topbar('Last night', 'close') + '<div class="wrap col sheet-pad" style="gap:16px"><div class="col" style="gap:8px"><div class="label">How did you sleep?</div>' + seg('q', ['Rough', 'Patchy', 'Okay', 'Good'], D.q) + '</div><div class="col" style="gap:8px"><div class="label">Dreams</div>' + seg('vivid', ['Normal', 'Vivid'], D.vivid) + '</div><div class="col" style="gap:8px"><label class="label" for="dream-text">Anything you remember (optional)</label><textarea id="dream-text" class="field" data-a="draft" data-k="note">' + esc(D.note || '') + '</textarea></div><button class="btn btn-deep" data-a="saveDream" data-h="' + d.h + '">Save</button></div>';
 }
 function isoDay(t) { var d = new Date(t); return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
+function hhmm(t) { var d = new Date(t); return pad(d.getHours()) + ':' + pad(d.getMinutes()); }
+function parseDayTime(v, tm) { var day = parseDay(v); if (day == null) return null; var m = /^(\d{1,2}):(\d{2})/.exec(tm || ''); var t = day + (m ? (+m[1]) * 36e5 + (+m[2]) * 6e4 : 0); return Math.min(t, now()); }
+function fmtSpan(ms) { ms = Math.max(0, ms); var d = Math.floor(ms / DAY), h = Math.floor((ms % DAY) / 36e5), m = Math.floor((ms % 36e5) / 6e4); return (d ? d + 'd ' : '') + h + 'h ' + pad(m) + 'm'; }
+function fullWhen(t) { var d = new Date(t); return shortDate(t) + ', ' + hourLabel(d.getHours()).replace(' ', ':' + pad(d.getMinutes()) + ' '); }
 function parseDay(v) { var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(v || ''); if (!m) return null; var t = new Date(+m[1], +m[2] - 1, +m[3]).getTime(); return isNaN(t) ? null : Math.min(t, sod(now())); }
 function vAdd() {
   var D = UI.draft; D.types = D.types || [];
@@ -1327,7 +1465,7 @@ function vAdd() {
       out += '<div class="card col hcfg" style="gap:10px"><div class="row" style="gap:10px"><span class="hicon">' + ic(T.icon, 20) + '</span><span class="grow" style="font-weight:800">' + esc(k === 'custom' ? (D['name:custom'] || 'Something else') : T.label) + '</span></div>';
       if (k === 'custom') out += '<label class="small" for="custom-name">Name it</label><input id="custom-name" class="field" data-a="draft" data-k="name:custom" value="' + esc(D['name:custom'] || '') + '" placeholder="e.g. Energy drinks, doomscrolling">';
       out += '<div class="small">Goal</div>' + seg('goal:' + k, ['Quit', 'Cut back'], g);
-      out += '<label class="small" for="since-' + k + '">' + (g === 0 ? 'Day one was' : 'Started cutting back on') + '</label><input id="since-' + k + '" class="field" type="date" max="' + isoDay(now()) + '" data-a="draft" data-k="since:' + k + '" value="' + sinceV + '"><div class="tiny">' + (g === 0 ? 'Already a few days in? Pick the day you stopped and we\'ll count from there.' : 'We\'ll compare against how things were before this date.') + '</div>';
+      out += '<label class="small" for="since-' + k + '">' + (g === 0 ? 'Day one began' : 'Started cutting back') + '</label><div class="row"><input id="since-' + k + '" class="field" style="flex:1.35" type="date" max="' + isoDay(now()) + '" data-a="draft" data-k="since:' + k + '" value="' + sinceV + '"><input id="sincet-' + k + '" class="field" style="flex:1" type="time" data-a="draft" data-k="time:' + k + '" value="' + (D['time:' + k] || hhmm(now())) + '" aria-label="Time"></div><div class="tiny">' + (g === 0 ? 'Already a while in? Set the day and time you stopped, and we\'ll count from there.' : 'We\'ll compare against how things were before this.') + '</div>';
       if (T.costLabel) out += '<label class="small" for="cost-' + k + '">' + T.costLabel + ' (A$)</label><input id="cost-' + k + '" class="field num" inputmode="decimal" data-a="draft" data-k="cost:' + k + '" value="' + esc(D['cost:' + k] != null ? D['cost:' + k] : T.cost || '') + '">';
       if (T.safety.strong) out += '<div class="safety strong small" style="color:var(--ink)"><b>' + esc(T.safety.title) + '.</b> ' + esc(T.safety.body) + '</div>';
       out += '</div>';
@@ -1385,9 +1523,10 @@ function render(scrollTop) {
   app.className = 'app ' + (night ? 'night' : 'day') + (tabs ? '' : ' stacked') + (darkPage ? ' darkpage' : '') + (S && tabs && UI.tab === 'today' ? ' todaypage' : '') + (home ? (homeOpen ? ' sunhome' : ' sunrest') : '') + (home && !tabs ? ' notabs' : '') + (S && tabs && !UI.stack.length && UI.tab !== 'today' ? ' hashead' : '');
   app.innerHTML = darkPage ? '<div class="dark">' + html + '</div>' : html;
   if (scrollTop) window.scrollTo(0, 0);
-  var bar = night ? '#142824' : '#F5EFE3';
-  if (darkPage) bar = night ? '#1B332E' : '#2F4F45';
-  if (S && tabs && !UI.stack.length && UI.tab !== 'today') bar = scenePick().pal.sky[night ? 1 : 0];
+  var tk = themeTokens();
+  ['page', 'card', 'tint', 'line', 'panel', 'deep', 'euc', 'sage', 'tab', 'muted', 'ink'].forEach(function (k) { app.style.setProperty('--' + k, tk[k]); document.documentElement.style.setProperty('--' + k, tk[k]); });
+  document.body.style.background = tk.page;
+  var bar = tk.panel;
   document.documentElement.style.setProperty('--sbar', bar);
   try { document.querySelector('meta[name="theme-color"]').setAttribute('content', home ? scenePick().pal.sky[night ? 1 : 0] : bar); } catch (e) {}
   sunSync(home, homeOpen);
@@ -1403,6 +1542,14 @@ var A = {
   restartWelcome: function () { UI.onb = ''; render(true); },
   saveName: function () { var n = val('name'); if (n && CRISIS.test(n)) { S = freshState(''); save(); crisis(); return; } S = freshState(n); save(); UI.tab = 'today'; UI.sunNext = ['happy', 'Nice to meet you' + (n ? ', ' + n : '') + '!', 2000]; push('add'); },
   tab: function (el) { UI.tab = el.dataset.t; UI.themeSheet = false; render(true); },
+  goHome: function () {
+    if (!S) return;
+    var wasHome = !UI.stack.length && UI.tab === 'today';
+    UI.stack = []; UI.draft = {}; UI.tab = 'today'; UI.homeOpen = false; UI.themeSheet = false;
+    UI.sunNext = wasHome ? ['happy', 'I\'ll be right here. Tap me whenever.', 1800] : ['happy', 'Hello again. I\'m right here.', 1800];
+    render(true);
+  },
+  tip: function (el) { toast(el.dataset.tip); },
   sunTap: function () {
     if (!S) { sunSay('happy', 'Hi! Tap Get started below and we\'ll set you up.', 2200); return; }
     if (!S.habits.length) { push('add'); return; }
@@ -1482,7 +1629,7 @@ var A = {
       if (CRISIS.test(name)) { crisis(); return; }
     }
     types.forEach(function (k) {
-      var T = TYPES[k], picked = parseDay(D['since:' + k]);
+      var T = TYPES[k], picked = parseDayTime(D['since:' + k] || isoDay(now()), D['time:' + k] || hhmm(now()));
       var since = picked != null ? picked : (S.demo ? sod(now()) - 34 * DAY : sod(now()));
       var h = { id: uid(), type: k, name: k === 'custom' ? D['name:custom'].trim() : T.label, goal: D['goal:' + k] === 1 ? 'cut' : 'quit', cost: D['cost:' + k] != null && D['cost:' + k] !== '' ? parseFloat(D['cost:' + k]) || 0 : T.cost || 0, since: since };
       S.habits.push(h); made.push(h);
@@ -1556,7 +1703,7 @@ document.addEventListener('click', function (ev) {
 });
 function onField(ev) {
   var el = ev.target; if (!el.dataset) return;
-  if (el.dataset.a === 'since') { var top0 = UI.stack[UI.stack.length - 1], h0 = top0 && habit(top0.d.h), t0 = parseDay(el.value); if (h0 && t0 != null) { h0.since = t0; save(); if (ev.type === 'change') render(); } return; }
+  if (el.dataset.a === 'since') { var h0 = habit(el.dataset.h), dv = document.getElementById('since-' + el.dataset.h), tv = document.getElementById('sincet-' + el.dataset.h), t0 = h0 && dv ? parseDayTime(dv.value, tv ? tv.value : '00:00') : null; if (h0 && t0 != null) { h0.since = t0; save(); if (ev.type === 'change') render(); } return; }
   if (el.dataset.a === 'draft') UI.draft[el.dataset.k] = el.value;
   if (el.dataset.a === 'cost') { var top = UI.stack[UI.stack.length - 1], h = top && habit(top.d.h); if (h) { h.cost = parseFloat(el.value) || 0; save(); } }
   if (el.dataset.a === 'draft' && ev.type === 'change' && /^since:/.test(el.dataset.k)) render();
@@ -1567,6 +1714,7 @@ document.addEventListener('gesturestart', function (e) { e.preventDefault(); }, 
 document.addEventListener('dblclick', function (e) { e.preventDefault(); }, { passive: false });
 window.addEventListener('scroll', function () { document.body.classList.toggle('scrolled', window.scrollY > (SUN.phPx || 300) - 60); }, { passive: true });
 try { window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function () { render(); }); } catch (e) {}
+setInterval(function () { Array.prototype.forEach.call(document.querySelectorAll('[data-from]'), function (el) { el.textContent = fmtSpan(now() - +el.dataset.from); }); }, 15000);
 setInterval(function () { if (!UI.stack.length && S) { var n = isNight(); if (n !== render._n) { render._n = n; render(); } } }, 60000);
 
 S = load();
