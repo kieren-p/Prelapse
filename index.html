@@ -2,7 +2,7 @@
 <html lang="en-AU">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Prelapse</title>
 <meta name="description" content="A kind, private habit tracker that helps you spot tricky days before they happen.">
 <meta name="theme-color" content="#2F4F45">
@@ -37,6 +37,9 @@
   --panel: #1B332E; --glass: rgba(245,239,227,0.08); --tab: #12241F; --plus: #4A4224; color-scheme: dark }
 
 html, body { height: 100%; margin: 0; }
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; touch-action: manipulation; overflow-x: hidden; }
+body { overflow-anchor: none; overscroll-behavior-y: none; -webkit-tap-highlight-color: transparent; }
+button, a, .seg button { -webkit-user-select: none; user-select: none; touch-action: manipulation; }
 body { background: var(--page); color: var(--ink); font-family: var(--font); font-size: 15px; line-height: 1.45; -webkit-font-smoothing: antialiased; }
 * { box-sizing: border-box; }
 button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
@@ -45,7 +48,8 @@ input, textarea, select { font: inherit; color: var(--ink); }
 a { color: inherit; }
 
 .app { max-width: 480px; margin: 0 auto; min-height: 100%; background: var(--page); color: var(--ink); position: relative; padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px)); }
-.app.stacked { padding-bottom: 32px; }
+.app.stacked { padding-bottom: calc(32px + env(safe-area-inset-bottom, 0px)); }
+.app:not(.sunhome):not(.sunrest):not(.hashead) { padding-top: env(safe-area-inset-top, 0px); }
 .app.todaypage { background: var(--panel); }
 .wrap { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
 .col { display: flex; flex-direction: column; gap: 12px; }
@@ -93,7 +97,11 @@ h1, h2, h3 { margin: 0; text-wrap: balance; }
 .edge-high { border-left: 6px solid var(--terra); }
 .plus { background: var(--plus); color: var(--ink); font-size: 11px; font-weight: 800; padding: 3px 8px; border-radius: 6px; letter-spacing: 0.5px; }
 
-.field { width: 100%; background: var(--card); border: 1.5px solid var(--line); border-radius: 14px; padding: 12px 14px; font-size: 15px; }
+.field { width: 100%; background: var(--card); border: 1.5px solid var(--line); border-radius: 14px; padding: 12px 14px; font-size: 16px; min-height: 48px; }
+input[type="date"].field { -webkit-appearance: none; appearance: none; display: block; text-align: left; }
+input[type="date"].field::-webkit-date-and-time-value { text-align: left; }
+.panel .field { background: rgba(245,239,227,0.1); border-color: rgba(185,203,191,0.35); color: var(--panel-ink); }
+.panel .field::placeholder { color: var(--panel-muted); }
 .field:focus { border-color: var(--deep); outline: none; }
 textarea.field { min-height: 84px; resize: vertical; }
 
@@ -136,7 +144,7 @@ textarea.field { min-height: 84px; resize: vertical; }
 .tabbar { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 480px; background: var(--tab); display: flex; justify-content: space-around; padding: 10px max(8px, env(safe-area-inset-left, 0px)) calc(10px + env(safe-area-inset-bottom, 0px)) max(8px, env(safe-area-inset-right, 0px)); z-index: 20; }
 .tabbar button { display: flex; flex-direction: column; align-items: center; gap: 3px; color: #B9CBBF; font-size: 11px; font-weight: 600; min-width: 64px; padding: 4px 0; }
 .tabbar button.on { color: #F2C462; font-weight: 800; }
-body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--page); }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--sbar, var(--page)); transition: background 0.3s; }
 
 /* Ride it out */
 .ride-ring { position: relative; width: 240px; height: 240px; margin: 8px auto 0; }
@@ -192,15 +200,21 @@ details summary::-webkit-details-marker { display: none; }
 #sunscene.night { color: #F5EFE3; --so: 1; --co: 0.1; --bo: 0; --fo: 1; }
 #app { position: relative; z-index: 1; }
 body.sunon::before { display: none; }
-.app.sunhome { background: transparent; pointer-events: none; padding-top: calc(var(--k, 1) * 372px); }
+.app.sunhome { background: transparent; pointer-events: none; padding-top: var(--ph, 372px); padding-bottom: 0; }
 .app.sunhome > * { pointer-events: auto; }
 .app.sunrest { background: transparent; pointer-events: none; min-height: 0; padding: 0; }
 .app.sunrest > * { pointer-events: auto; }
-.app.sunhome .panel { margin-top: 0; min-height: calc(100vh - var(--k, 1) * 372px); padding-top: 4px; }
+.app.sunhome .panel { margin-top: 0; min-height: calc(100vh - var(--ph, 372px)); padding-top: 4px; padding-bottom: calc(108px + env(safe-area-inset-bottom, 0px)); }
+.app.sunhome.notabs .panel { padding-bottom: calc(32px + env(safe-area-inset-bottom, 0px)); }
+body.sunon::before { display: block; background: var(--panel); opacity: 0; transition: opacity 0.2s; }
+body.sunon.scrolled::before { opacity: 1; }
+#sunscene.open.nos .ss-btns { display: none; }
+.brand { display: flex; align-items: center; gap: 10px; }
+.brand span { font-size: 22px; font-weight: 800; letter-spacing: -0.4px; }
 .app.sunhome .panel.rise { animation: pl-rise 0.7s cubic-bezier(0.34, 1.2, 0.64, 1); }
 .ss-handle { display: flex; justify-content: center; align-items: center; width: 120px; height: 28px; margin: 0 auto 6px; }
 .ss-handle span { width: 44px; height: 5px; border-radius: 3px; background: #A9C2A1; }
-.ss-stage { position: absolute; left: 0; top: 0; width: 390px; height: 1600px; transform-origin: 0 0; transform: scale(var(--k, 1)); }
+.ss-stage { position: absolute; left: 0; top: 0; width: 390px; height: 1600px; transform-origin: 0 0; transform: scale(var(--k, 1)) translateY(var(--so-y, 0px)); transition: transform 0.8s cubic-bezier(0.34, 1.2, 0.64, 1); }
 .ss-ground { position: absolute; left: 0; top: 0; width: 390px; height: 600px; transform: translateY(var(--gy, 12px)); transition: transform 0.8s cubic-bezier(0.34, 1.2, 0.64, 1); }
 .ss-layer { position: absolute; left: -40px; top: 0; width: 470px; height: 600px; pointer-events: none; transition: transform 0.25s ease-out, background 0.7s; }
 .ss-under { position: absolute; left: -40px; top: 590px; width: 470px; height: 1200px; }
@@ -259,6 +273,17 @@ body.sunon::before { display: none; }
 .ss-sparks { position: absolute; left: 0; top: 0; width: 120px; height: 120px; pointer-events: none; }
 .ss-sparks span { position: absolute; left: 56px; top: 56px; width: 8px; height: 8px; }
 .ss-sparks i { display: block; width: 8px; height: 8px; border-radius: 50%; animation: pl-spark 0.9s ease-out 2 both; }
+.phead { position: relative; height: calc(166px + env(safe-area-inset-top, 0px)); overflow: hidden; }
+.phead svg { position: absolute; left: 0; bottom: 0; width: 100%; height: 96px; }
+.phead .wrap { position: relative; padding-top: calc(14px + env(safe-area-inset-top, 0px)); }
+.phead .hero { font-size: 28px; }
+.phead .sub { font-size: 14px; font-weight: 600; opacity: 0.8; margin-top: 2px; }
+.phead.night { color: #F5EFE3; }
+.pbody { position: relative; margin-top: -26px; border-radius: 26px 26px 0 0; background: var(--page); padding-top: 18px; }
+.app.hashead { padding-top: 0; }
+.check { width: 26px; height: 26px; border-radius: 50%; border: 2px solid var(--line); display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: #fff; }
+.check.on { background: var(--deep); border-color: var(--deep); }
+.hcfg { border: 1.5px solid var(--line); }
 .thsheet { position: fixed; left: 50%; transform: translateX(-50%); bottom: 0; width: 100%; max-width: 480px; z-index: 30; box-sizing: border-box; padding: 18px 20px calc(20px + env(safe-area-inset-bottom, 0px)); border-radius: 28px 28px 0 0; background: #F5EFE3; color: #2F4F45; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 -10px 40px rgba(20, 40, 36, 0.25); animation: pl-rise 0.5s cubic-bezier(0.34, 1.2, 0.64, 1); }
 .thsheet h2 { margin: 0; font-size: 22px; font-weight: 800; }
 .thgrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
@@ -822,7 +847,8 @@ function sunSparks() {
 }
 function sunTips() {
   var out = [], night = isNight(), hr = new Date().getHours();
-  if (!S || !S.habits.length) return ['Hi, I\'m your sun. Add a habit and I\'ll keep you company.'];
+  if (!S) return ['G\'day! I\'m your sun. I\'ll keep you company on the tricky days.'];
+  if (!S.habits.length) return ['Hi, I\'m your sun. Add a habit and I\'ll keep you company.'];
   if (!S.checkins[dkey(now())]) out.push('Tap me when you want to check in.');
   S.habits.forEach(function (h) {
     if (h.goal !== 'quit') return;
@@ -839,9 +865,14 @@ function sunLayout() {
   var sc = sunEl('sunscene'); if (!sc) return;
   var W = Math.min(window.innerWidth || 390, 480), k = W / 390, vh = window.innerHeight || 800, H = vh / k;
   var gy = SUN.open ? 12 : Math.max(12, Math.round(H - 514));
+  var lift = SUN.open ? Math.max(0, Math.min(40, Math.round((400 * k - 0.5 * vh) / k))) : 0, ph = Math.round((372 - lift) * k);
+  SUN.phPx = ph;
+  sc.style.setProperty('--so-y', (-lift) + 'px');
+  document.documentElement.style.setProperty('--ph', ph + 'px');
+  sc.classList.toggle('nos', !S);
   sc.style.setProperty('--k', k);
   document.documentElement.style.setProperty('--k', k);
-  sc.style.setProperty('--sh', (SUN.open ? Math.round(400 * k) : vh) + 'px');
+  sc.style.setProperty('--sh', (SUN.open ? Math.round((400 - lift) * k) : vh) + 'px');
   sc.style.setProperty('--gy', gy + 'px');
   sc.style.setProperty('--bt', (SUN.open ? 312 : gy + 2) + 'px');
   sc.style.setProperty('--ba', SUN.open ? 'flex-start' : 'flex-end');
@@ -865,7 +896,7 @@ function sunPaint() {
   sc.classList.toggle('open', SUN.open);
   var b = sunEl('ss-bubble'); b.classList.remove('pop-a', 'pop-b'); void b.offsetWidth; b.classList.add(SUN.pop % 2 ? 'pop-a' : 'pop-b');
   sunEl('ss-msg').textContent = SUN.msg;
-  sunEl('ss-greet').textContent = (night ? 'Night' : 'G\'day') + (S && S.name ? ', ' + S.name : '');
+  sunEl('ss-greet').textContent = !S ? 'Welcome to Prelapse' : (night ? 'Night' : 'G\'day') + (S.name ? ', ' + S.name : '');
   var sun = sunEl('ss-sun'); sun.setAttribute('aria-label', SUN.open ? 'Hide check-in' : 'Open check-in'); sun.setAttribute('aria-expanded', SUN.open);
   var nb = sunEl('ss-night'); nb.setAttribute('aria-label', night ? 'Switch to day' : 'Switch to night');
   nb.innerHTML = night ? '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path></svg>' : '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5 A8 8 0 1 1 9.5 4 A6.5 6.5 0 0 0 20 14.5 Z"></path></svg>';
@@ -883,7 +914,7 @@ function sunSync(show, open) {
   if (!was || wasOpen !== open) {
     if (Date.now() < SUN.hold) { sunPaint(); return; }
     var tips = sunTips();
-    if (!was) { SUN.mood = sunBase(); SUN.msg = open ? 'Here\'s your day. How are you travelling?' : (isNight() ? 'Shh. Resting up. Tap me if you need me.' : tips[0]); SUN.pop++; }
+    if (!was) { SUN.mood = sunBase(); SUN.msg = !S ? tips[0] : open ? 'Here\'s your day. How are you travelling?' : (isNight() ? 'Shh. Resting up. Tap me if you need me.' : tips[0]); SUN.pop++; }
   }
   sunPaint();
 }
@@ -910,6 +941,13 @@ window.addEventListener('pointermove', function (e) {
 }, { passive: true });
 window.addEventListener('resize', function () { if (SUN.shown) sunLayout(); });
 
+function pageHead(title, sub) {
+  var T = scenePick(), n = isNight() ? 1 : 0, sky = T.pal.sky[n];
+  function lay(a) { return '<path d="' + a[2] + '" fill="' + T.pal[a[0]][n] + '"/>'; }
+  var front = T.front.filter(function (a) { return a[1] <= 12; });
+  return '<header class="phead' + (n ? ' night' : '') + '" style="background:' + sky + ';color:' + (n ? '#F5EFE3' : '#2F4F45') + '"><svg viewBox="40 150 390 96" preserveAspectRatio="xMidYMax slice" aria-hidden="true">' + T.behind.map(lay).join('') +
+    '<circle cx="235" cy="196" r="44" fill="#F2C462"/><circle cx="222" cy="182" r="22" fill="#F6D07C"/>' + front.map(lay).join('') + '</svg><div class="wrap"><h1 class="hero">' + esc(title) + '</h1>' + (sub ? '<div class="sub">' + esc(sub) + '</div>' : '') + '</div></header>';
+}
 function vThemes() {
   var cur = scenePick().id;
   return '<div class="thsheet" role="dialog" aria-label="Themes"><div class="row" style="justify-content:space-between"><div><h2>Themes</h2><div class="small" style="color:#3E5A50">Tap a scene to see it up top.</div></div><button class="btn btn-sm" style="background:#E6DCC6;color:#2F4F45" data-a="themesDone">Done</button></div><div class="thgrid">' +
@@ -1032,7 +1070,7 @@ function vInsights() {
   function avg(a) { return a.length ? a.reduce(function (x, y) { return x + y; }, 0) / a.length : 0; }
   var ratio = avg(okS) ? avg(shortS) / avg(okS) : 0;
   var rate = crav.length ? Math.round(100 * crav.filter(function (e) { return e.o === 'rode'; }).length / crav.length) : 0;
-  var out = '<div class="wrap col" style="padding-block:20px 8px"><h1 class="hero">Insights</h1><div class="small">Last 30 days. Patterns, not promises.</div>';
+  var out = pageHead('Insights', 'Last 30 days. Patterns, not promises.') + '<div class="wrap col pbody" style="padding-bottom:8px">';
   out += '<div class="wrapflex"><button class="chip' + (UI.ins === 'all' ? ' on' : '') + '" data-a="ins" data-h="all">All habits</button>' + S.habits.map(function (h) { return '<button class="chip' + (UI.ins === h.id ? ' on' : '') + '" data-a="ins" data-h="' + h.id + '">' + esc(TYPES[h.type].short === 'Habit' ? h.name : TYPES[h.type].short) + '</button>'; }).join('') + '</div>';
   if (!crav.length) return out + '<div class="card empty">' + ic('wave', 36) + '<div class="heading" style="margin-top:8px">No cravings logged yet</div><div class="small">Log a few and patterns will start to show here.</div></div></div>';
   out += '<div class="tiles"><div class="tile"><div class="v deep">' + crav.length + '</div><div class="k">cravings logged</div></div><div class="tile"><div class="v deep">' + rate + '%</div><div class="k">ridden out</div></div><div class="tile"><div class="v deep">' + DOW[(dmax + 1) % 7].slice(0, 3) + '</div><div class="k">hardest day</div></div></div>';
@@ -1044,7 +1082,7 @@ function vInsights() {
 }
 
 function vProgress() {
-  var out = '<div class="wrap col" style="padding-block:20px 8px"><h1 class="hero">Progress</h1>';
+  var out = pageHead('Progress', '') + '<div class="wrap col pbody" style="padding-bottom:8px">';
   if (!S.habits.length) return out + '<div class="card empty">Add a habit to see progress.</div></div>';
   var totalSaved = 0, totalRode = ridden(null);
   S.habits.forEach(function (h) {
@@ -1063,7 +1101,7 @@ function vProgress() {
 
 function vSupport() {
   var used = {}; S.habits.forEach(function (h) { TYPES[h.type].lines.forEach(function (l) { used[l] = 1; }); });
-  var out = '<div class="wrap col" style="padding-block:20px 8px"><h1 class="hero">Support</h1>';
+  var out = pageHead('Support', 'Always free. You\'re not on your own.') + '<div class="wrap col pbody" style="padding-bottom:8px">';
   out += '<div class="card col dark" style="background:var(--panel);color:var(--panel-ink)"><div class="heading">Need to talk to someone now?</div><div class="small">Free, 24 hours, anywhere in Australia.</div><a class="btn btn-wattle" href="tel:131114" style="text-decoration:none">' + ic('phone', 20, 2) + 'Call Lifeline <span class="copy num">13 11 14</span></a><div class="tiny">Text Lifeline on <span class="copy">0477 13 11 14</span>. In danger right now? Call 000.</div></div>';
   out += '<div class="card col"><div class="label">Your people</div>' + (S.people.length ? S.people.map(function (p) { return '<div class="list-row"><div class="hicon">' + ic('chat', 20) + '</div><div class="grow"><div style="font-weight:800">' + esc(p.name) + '</div><div class="tiny">' + esc(p.how) + '</div></div><button class="iconbtn" data-a="delPerson" data-id="' + p.id + '" aria-label="Remove ' + esc(p.name) + '">' + ic('close', 18, 2) + '</button></div>'; }).join('') : '<div class="small">Add someone you can text on a tricky night.</div>') +
     '<div class="row"><input id="person-name" class="field" placeholder="Name" style="flex:1"><input id="person-how" class="field" placeholder="How to reach them" style="flex:1.3"></div><button class="btn btn-outline btn-sm" data-a="addPerson">' + ic('plus', 18, 2) + 'Add person</button></div>';
@@ -1104,6 +1142,7 @@ function vHabit(d) {
   out += '<div class="safety col' + (T.safety.strong ? ' strong' : '') + '" style="gap:6px"><div class="row" style="gap:8px;font-weight:800">' + ic('shield', 20, 2) + esc(T.safety.title) + '</div><div class="small" style="color:var(--ink)">' + esc(T.safety.body) + '</div></div>';
   out += '<div class="card" style="padding-top:8px;padding-bottom:8px">' + T.lines.map(lineCard).join('') + '</div>';
   out += '<div class="card col"><div class="label">Settings</div><div class="row"><span class="grow">Goal</span></div>' + seg('goal', ['Quit', 'Cut back'], h.goal === 'quit' ? 0 : 1) +
+    '<label class="small" for="since-' + h.id + '">' + (h.goal === 'quit' ? 'Day one was' : 'Started on') + '</label><input class="field" type="date" id="since-' + h.id + '" max="' + isoDay(now()) + '" value="' + isoDay(h.since) + '" data-a="since">' +
     (T.costLabel ? '<label class="small" for="cost-' + h.id + '">' + T.costLabel + ' (A$)</label><input class="field num" id="cost-' + h.id + '" inputmode="decimal" value="' + (h.cost || '') + '" data-a="cost">' : '') +
     (UI.confirmRemove === h.id ? '<div class="small" style="font-weight:800">Remove ' + esc(h.name) + ' and its history?</div><div class="row"><button class="btn btn-outline btn-sm grow" data-a="cancelRemove">Keep it</button><button class="btn btn-deep btn-sm grow" data-a="doRemove" data-h="' + h.id + '">Remove</button></div>' : '<button class="btn-text" data-a="askRemove" data-h="' + h.id + '" style="color:var(--muted)">Remove this habit</button>') + '</div>';
   return out + '</div>';
@@ -1270,21 +1309,31 @@ function vDream(d) {
   var D = UI.draft; if (D.q == null) D.q = 2; if (D.vivid == null) D.vivid = 0;
   return topbar('Last night', 'close') + '<div class="wrap col sheet-pad" style="gap:16px"><div class="col" style="gap:8px"><div class="label">How did you sleep?</div>' + seg('q', ['Rough', 'Patchy', 'Okay', 'Good'], D.q) + '</div><div class="col" style="gap:8px"><div class="label">Dreams</div>' + seg('vivid', ['Normal', 'Vivid'], D.vivid) + '</div><div class="col" style="gap:8px"><label class="label" for="dream-text">Anything you remember (optional)</label><textarea id="dream-text" class="field" data-a="draft" data-k="note">' + esc(D.note || '') + '</textarea></div><button class="btn btn-deep" data-a="saveDream" data-h="' + d.h + '">Save</button></div>';
 }
+function isoDay(t) { var d = new Date(t); return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
+function parseDay(v) { var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(v || ''); if (!m) return null; var t = new Date(+m[1], +m[2] - 1, +m[3]).getTime(); return isNaN(t) ? null : Math.min(t, sod(now())); }
 function vAdd() {
-  var D = UI.draft; D.goal = D.goal || 0;
-  var have = S.habits.map(function (h) { return h.type; });
-  var out = topbar('Add a habit', 'close') + '<div class="wrap col sheet-pad"><h1 class="title">What are you working on?</h1><div class="small">Each one gets its own dashboard, tips and safety notes.</div>';
-  ['vape', 'smoking', 'alcohol', 'cannabis', 'porn', 'gambling', 'social', 'food', 'custom'].forEach(function (k) {
-    var T = TYPES[k], on = D.type === k, taken = (k !== 'custom' && have.indexOf(k) >= 0) || T.soon;
-    out += '<button class="card row" style="gap:12px;text-align:left;width:100%;' + (on ? 'outline:2px solid var(--deep);' : '') + (taken ? 'opacity:.55' : '') + '" data-a="pickType" data-k="' + k + '"' + (taken ? ' disabled' : '') + ' aria-pressed="' + on + '"><span class="hicon">' + ic(T.icon, 22) + '</span><span class="grow"><span style="display:block;font-weight:800">' + (k === 'custom' ? 'Something else' : T.label) + '</span><span class="tiny" style="display:block">' + (T.soon ? 'Coming later · ' + T.blurb.toLowerCase() : taken ? 'Already tracking' : T.blurb) + '</span></span>' + (on ? '<span style="color:var(--deep)">' + ic('check', 22, 2.4) + '</span>' : '') + '</button>';
+  var D = UI.draft; D.types = D.types || [];
+  var have = S.habits.map(function (h) { return h.type; }), first = !S.habits.length;
+  var out = topbar(first ? 'Your habits' : 'Add habits', 'close') + '<div class="wrap col sheet-pad">' + (first ? '<div class="label" style="color:var(--deep)">Step 2 of 2</div>' : '') +
+    '<h1 class="title">What are you working on?</h1><div class="small">Pick as many as you like. Each gets its own dashboard, tips and safety notes.</div>';
+  ['vape', 'smoking', 'alcohol', 'cannabis', 'porn', 'gambling', 'custom', 'social', 'food'].forEach(function (k) {
+    var T = TYPES[k], on = D.types.indexOf(k) >= 0, taken = (k !== 'custom' && have.indexOf(k) >= 0) || T.soon;
+    out += '<button class="card row" style="gap:12px;text-align:left;width:100%;' + (on ? 'box-shadow:inset 0 0 0 2px var(--deep);' : '') + (taken ? 'opacity:.55' : '') + '" data-a="toggleType" data-k="' + k + '"' + (taken ? ' disabled' : '') + ' aria-pressed="' + on + '"><span class="hicon">' + ic(T.icon, 22) + '</span><span class="grow"><span style="display:block;font-weight:800">' + (k === 'custom' ? 'Something else' : T.label) + '</span><span class="tiny" style="display:block">' + (T.soon ? 'Coming later · ' + T.blurb.toLowerCase() : taken ? 'Already tracking' : T.blurb) + '</span></span>' + (taken ? '' : '<span class="check' + (on ? ' on' : '') + '">' + (on ? ic('check', 16, 3) : '') + '</span>') + '</button>';
   });
-  if (D.type) {
-    var T2 = TYPES[D.type];
-    if (D.type === 'custom') out += '<label class="label" for="custom-name">Name it</label><input id="custom-name" class="field" data-a="draft" data-k="name" value="' + esc(D.name || '') + '" placeholder="e.g. Energy drinks, doomscrolling">';
-    out += '<div class="label">Goal</div>' + seg('goal', ['Quit', 'Cut back'], D.goal);
-    if (T2.costLabel) out += '<label class="label" for="add-cost">' + T2.costLabel + ' (A$)</label><input id="add-cost" class="field num" inputmode="decimal" data-a="draft" data-k="cost" value="' + esc(D.cost != null ? D.cost : T2.cost || '') + '">';
-    if (T2.safety.strong) out += '<div class="safety strong small" style="color:var(--ink)"><b>' + esc(T2.safety.title) + '.</b> ' + esc(T2.safety.body) + '</div>';
-    out += '<button class="btn btn-deep" data-a="saveHabit">Add ' + esc(D.type === 'custom' ? (D.name || 'habit') : T2.label.toLowerCase()) + '</button>' + (S.demo ? '<div class="tiny" style="text-align:center">Demo mode adds a few weeks of sample history so the dashboard has something to show.</div>' : '');
+  if (D.types.length) {
+    out += '<div class="label" style="margin-top:8px">A few details</div>';
+    D.types.forEach(function (k) {
+      var T = TYPES[k], g = D['goal:' + k] || 0, sinceV = D['since:' + k] || isoDay(now());
+      out += '<div class="card col hcfg" style="gap:10px"><div class="row" style="gap:10px"><span class="hicon">' + ic(T.icon, 20) + '</span><span class="grow" style="font-weight:800">' + esc(k === 'custom' ? (D['name:custom'] || 'Something else') : T.label) + '</span></div>';
+      if (k === 'custom') out += '<label class="small" for="custom-name">Name it</label><input id="custom-name" class="field" data-a="draft" data-k="name:custom" value="' + esc(D['name:custom'] || '') + '" placeholder="e.g. Energy drinks, doomscrolling">';
+      out += '<div class="small">Goal</div>' + seg('goal:' + k, ['Quit', 'Cut back'], g);
+      out += '<label class="small" for="since-' + k + '">' + (g === 0 ? 'Day one was' : 'Started cutting back on') + '</label><input id="since-' + k + '" class="field" type="date" max="' + isoDay(now()) + '" data-a="draft" data-k="since:' + k + '" value="' + sinceV + '"><div class="tiny">' + (g === 0 ? 'Already a few days in? Pick the day you stopped and we\'ll count from there.' : 'We\'ll compare against how things were before this date.') + '</div>';
+      if (T.costLabel) out += '<label class="small" for="cost-' + k + '">' + T.costLabel + ' (A$)</label><input id="cost-' + k + '" class="field num" inputmode="decimal" data-a="draft" data-k="cost:' + k + '" value="' + esc(D['cost:' + k] != null ? D['cost:' + k] : T.cost || '') + '">';
+      if (T.safety.strong) out += '<div class="safety strong small" style="color:var(--ink)"><b>' + esc(T.safety.title) + '.</b> ' + esc(T.safety.body) + '</div>';
+      out += '</div>';
+    });
+    var n = D.types.length;
+    out += '<button class="btn btn-deep" data-a="saveHabits">' + (n === 1 ? 'Add ' + esc(D.types[0] === 'custom' ? (D['name:custom'] || 'habit') : TYPES[D.types[0]].label.toLowerCase()) : 'Add ' + n + ' habits') + '</button>' + (S.demo ? '<div class="tiny" style="text-align:center">Demo mode adds a few weeks of sample history so the dashboard has something to show.</div>' : '');
   }
   return out + '</div>';
 }
@@ -1305,14 +1354,13 @@ function crisis() { UI.stack.push({ v: 'crisis', d: {} }); UI.draft = {}; render
 
 /* ---------- onboarding ---------- */
 function vWelcome() {
-  return '<section class="scene">' + sceneSvg(sceneMode()) + '</section><section class="wrap col" style="background:var(--page);border-radius:30px 30px 0 0;margin-top:-40px;position:relative;padding-block:28px 24px;gap:14px">' +
-    '<div class="row" style="gap:10px"><svg width="34" height="34" viewBox="0 0 160 160" aria-hidden="true"><path d="M30 112 A50 50 0 0 1 130 112 Z" fill="#F2C462"/><path d="M40 124 C48 82 86 44 132 34 C126 78 90 116 40 124 Z" fill="#4C7864"/><path d="M14 112 H146" style="stroke:var(--panel)" stroke-width="6" stroke-linecap="round"/></svg><span style="font-size:22px;font-weight:800;letter-spacing:-0.4px">prelapse</span></div>' +
-    '<h1 class="hero" style="font-size:32px">Get ahead of the hard days.</h1><div style="color:var(--muted)">Check in for 30 seconds a day. Prelapse spots what sets your cravings off and helps you plan before the tricky ones.</div>' +
-    '<button class="btn btn-deep" data-a="demo">Try it with sample data</button><button class="btn btn-outline" data-a="fresh">Start fresh</button>' +
+  return '<section class="panel wrap col' + (UI.rise ? ' rise' : '') + '" style="gap:14px;padding-top:24px"><div class="brand"><svg width="34" height="34" viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="52" fill="#A9C2A1"/><circle cx="60" cy="58" r="21" fill="#F2C462"/><path d="M10.52 76 Q60 56 109.48 76 A52 52 0 0 1 10.52 76 Z" fill="#5E8C76"/></svg><span>prelapse</span></div>' +
+    '<h1 class="hero" style="font-size:30px">Get ahead of the hard days.</h1><div style="color:var(--panel-muted)">Check in for 30 seconds a day. Prelapse spots what sets your cravings off and helps you plan before the tricky ones.</div>' +
+    '<button class="btn btn-wattle" data-a="fresh">Get started</button><button class="btn btn-outline" data-a="demo">Look around with sample data</button>' +
     '<div class="row small" style="justify-content:center;gap:6px">' + ic('lock', 16, 2) + 'Saved only on this device. No account.</div></section>';
 }
 function vName() {
-  return '<div class="wrap col" style="padding-block:40px 24px;gap:16px"><div class="label" style="color:var(--deep)">Step 1 of 2</div><h1 class="hero">What should we call you?</h1><input id="name" class="field" data-a="draft" data-k="name" value="' + esc(UI.draft.name || '') + '" placeholder="First name or nickname" autocomplete="given-name"><button class="btn btn-deep" data-a="saveName">Continue</button><button class="btn btn-text" data-a="restartWelcome">Back</button></div>';
+  return '<section class="panel wrap col" style="gap:14px;padding-top:24px"><div class="label" style="color:var(--wattle)">Step 1 of 2</div><h1 class="title">What should we call you?</h1><input id="name" class="field" data-a="draft" data-k="name" value="' + esc(UI.draft.name || '') + '" placeholder="First name or nickname" autocomplete="given-name" enterkeyhint="next"><button class="btn btn-wattle" data-a="saveName">Continue</button><button class="btn btn-text" style="color:var(--panel-ink)" data-a="restartWelcome">Back</button></section>';
 }
 
 /* ---------- render ---------- */
@@ -1328,17 +1376,22 @@ function render(scrollTop) {
     else html = { today: vToday, insights: vInsights, progress: vProgress, support: vSupport }[UI.tab]();
     if (UI.tab === 'today' && UI.themeSheet) html += vThemes();
   }
-  var home = !!(S && !UI.stack.length && UI.tab === 'today'), homeOpen = home && (UI.homeOpen || !S.habits.length);
-  if (S && S.demo && !UI.stack.length && !home) html = '<div class="demo-bar wrap"><b>Demo</b> · sample data for Kieren · saved only on this device</div>' + html;
+  var home = !UI.stack.length && (!S || UI.tab === 'today'), homeOpen = home && (!S || UI.homeOpen || !S.habits.length);
   if (tabs) {
     var first = night ? ['today', 'moon', 'Tonight'] : ['today', 'today', 'Today'];
     html += '<nav class="tabbar" aria-label="Main">' + [first, ['insights', 'insights', 'Insights'], ['progress', 'progress', 'Progress'], ['support', 'support', 'Support']].map(function (t) { return '<button data-a="tab" data-t="' + t[0] + '" class="' + (UI.tab === t[0] ? 'on' : '') + '" aria-current="' + (UI.tab === t[0] ? 'page' : 'false') + '">' + ic(t[1], 24) + '<span>' + t[2] + '</span></button>'; }).join('') + '</nav>';
   }
   if (UI.toast) html += '<div class="toast" role="status">' + esc(UI.toast) + '</div>';
-  app.className = 'app ' + (night ? 'night' : 'day') + (tabs ? '' : ' stacked') + (darkPage ? ' darkpage' : '') + (S && tabs && UI.tab === 'today' ? ' todaypage' : '') + (home ? (homeOpen ? ' sunhome' : ' sunrest') : '');
+  app.className = 'app ' + (night ? 'night' : 'day') + (tabs ? '' : ' stacked') + (darkPage ? ' darkpage' : '') + (S && tabs && UI.tab === 'today' ? ' todaypage' : '') + (home ? (homeOpen ? ' sunhome' : ' sunrest') : '') + (home && !tabs ? ' notabs' : '') + (S && tabs && !UI.stack.length && UI.tab !== 'today' ? ' hashead' : '');
   app.innerHTML = darkPage ? '<div class="dark">' + html + '</div>' : html;
   if (scrollTop) window.scrollTo(0, 0);
+  var bar = night ? '#142824' : '#F5EFE3';
+  if (darkPage) bar = night ? '#1B332E' : '#2F4F45';
+  if (S && tabs && !UI.stack.length && UI.tab !== 'today') bar = scenePick().pal.sky[night ? 1 : 0];
+  document.documentElement.style.setProperty('--sbar', bar);
+  try { document.querySelector('meta[name="theme-color"]').setAttribute('content', home ? scenePick().pal.sky[night ? 1 : 0] : bar); } catch (e) {}
   sunSync(home, homeOpen);
+  if (scrollTop) { window.scrollTo(0, 0); document.body.classList.remove('scrolled'); }
   var top2 = UI.stack[UI.stack.length - 1]; if (top2 && top2.v === 'ride') startRideTimer(); else stopRideTimer();
 }
 
@@ -1346,12 +1399,12 @@ function render(scrollTop) {
 function val(id) { var el = document.getElementById(id); return el ? el.value.trim() : ''; }
 var A = {
   demo: function () { S = sampleState(); save(); UI.tab = 'today'; render(true); },
-  fresh: function () { UI.onb = 'name'; UI.draft = {}; render(true); },
+  fresh: function () { UI.onb = 'name'; UI.draft = {}; UI.sunNext = ['happy', 'Let\'s get you set up. It takes a minute.', 2000]; render(true); var f = document.getElementById('name'); if (f) setTimeout(function () { f.focus(); }, 350); },
   restartWelcome: function () { UI.onb = ''; render(true); },
-  saveName: function () { var n = val('name'); if (n && CRISIS.test(n)) { S = freshState(''); save(); crisis(); return; } S = freshState(n); save(); UI.tab = 'today'; push('add'); },
+  saveName: function () { var n = val('name'); if (n && CRISIS.test(n)) { S = freshState(''); save(); crisis(); return; } S = freshState(n); save(); UI.tab = 'today'; UI.sunNext = ['happy', 'Nice to meet you' + (n ? ', ' + n : '') + '!', 2000]; push('add'); },
   tab: function (el) { UI.tab = el.dataset.t; UI.themeSheet = false; render(true); },
   sunTap: function () {
-    if (!S) return;
+    if (!S) { sunSay('happy', 'Hi! Tap Get started below and we\'ll set you up.', 2200); return; }
     if (!S.habits.length) { push('add'); return; }
     UI.homeOpen = !UI.homeOpen; UI.themeSheet = false; UI.rise = UI.homeOpen;
     if (UI.homeOpen) UI.sunNext = isNight() ? ['sleep', 'Mm? I\'m here. What do you need?'] : ['happy', 'Here\'s your day. How are you travelling?', 1800];
@@ -1419,8 +1472,30 @@ var A = {
   planStep: function (el) { var p = S.plans[dkey(now())], i = +el.dataset.i, k = p.done.indexOf(i); if (k >= 0) p.done.splice(k, 1); else p.done.push(i); var c = p.done.length; if (k < 0) UI.sunNext = c >= p.steps.length ? ['cheer', 'Plan locked in. Tonight\'s got nothing on you.', 3200] : ['happy', ['Nice, one down.', 'Two done. Rolling now.', 'Nearly there.'][Math.min(c, 3) - 1], 1800]; save(); render(); },
   saveNote: function (el) { var t = (UI.draft.note || '').trim(); if (!t) { toast('Write something first'); return; } if (CRISIS.test(t)) { crisis(); return; } S.notes.push({ id: uid(), h: el.dataset.h, t: now(), text: t }); save(); pop(); toast('Note saved'); },
   saveDream: function (el) { var D = UI.draft; if (D.note && CRISIS.test(D.note)) { crisis(); return; } S.events.push({ id: uid(), t: now(), h: el.dataset.h, k: 'dream', q: (D.q || 0) + 1, vivid: D.vivid === 1, text: D.note || '' }); save(); pop(); toast('Sleep logged'); },
-  pickType: function (el) { UI.draft.type = el.dataset.k; UI.draft.cost = TYPES[el.dataset.k].cost || ''; render(); },
-  saveHabit: function () {
+  toggleType: function (el) { var a = UI.draft.types = UI.draft.types || [], k = el.dataset.k, i = a.indexOf(k); if (i >= 0) a.splice(i, 1); else a.push(k); render(); },
+  saveHabits: function () {
+    var D = UI.draft, types = D.types || [], made = [];
+    if (!types.length) { toast('Pick at least one habit'); return; }
+    for (var i = 0; i < types.length; i++) {
+      var k = types[i], T = TYPES[k], name = k === 'custom' ? (D['name:custom'] || '').trim() : T.label;
+      if (k === 'custom' && !name) { toast('Give your other habit a name'); return; }
+      if (CRISIS.test(name)) { crisis(); return; }
+    }
+    types.forEach(function (k) {
+      var T = TYPES[k], picked = parseDay(D['since:' + k]);
+      var since = picked != null ? picked : (S.demo ? sod(now()) - 34 * DAY : sod(now()));
+      var h = { id: uid(), type: k, name: k === 'custom' ? D['name:custom'].trim() : T.label, goal: D['goal:' + k] === 1 ? 'cut' : 'quit', cost: D['cost:' + k] != null && D['cost:' + k] !== '' ? parseFloat(D['cost:' + k]) || 0 : T.cost || 0, since: since };
+      S.habits.push(h); made.push(h);
+      if (S.demo) { S.events = S.events.concat(seedHabit(h, rng(h.id.length * 977 + S.habits.length), S.hardDow)); }
+    });
+    if (S.demo) S.events.sort(function (a, b) { return a.t - b.t; });
+    save();
+    if (made.length === 1 && S.habits.length > 1) { replaceTop('habit', { h: made[0].id }); return; }
+    UI.stack = []; UI.draft = {}; UI.tab = 'today'; UI.homeOpen = true; UI.rise = true;
+    UI.sunNext = made.length > 1 ? ['beam', made.length + ' habits, one team. I\'ve got you.', 2600] : ['beam', 'You\'re in. I\'ll be right here, every day.', 2600];
+    render(true);
+  },
+  saveHabitOld: function () {
     var D = UI.draft, T = TYPES[D.type], name = D.type === 'custom' ? (D.name || '').trim() : T.label;
     if (D.type === 'custom' && !name) { toast('Give your habit a name'); return; }
     if (CRISIS.test(name)) { crisis(); return; }
@@ -1479,11 +1554,18 @@ document.addEventListener('click', function (ev) {
   var el = ev.target.closest('[data-a]'); if (!el || el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') return;
   var fn = A[el.dataset.a]; if (fn) { ev.preventDefault(); fn(el); }
 });
-document.addEventListener('input', function (ev) {
+function onField(ev) {
   var el = ev.target; if (!el.dataset) return;
+  if (el.dataset.a === 'since') { var top0 = UI.stack[UI.stack.length - 1], h0 = top0 && habit(top0.d.h), t0 = parseDay(el.value); if (h0 && t0 != null) { h0.since = t0; save(); if (ev.type === 'change') render(); } return; }
   if (el.dataset.a === 'draft') UI.draft[el.dataset.k] = el.value;
   if (el.dataset.a === 'cost') { var top = UI.stack[UI.stack.length - 1], h = top && habit(top.d.h); if (h) { h.cost = parseFloat(el.value) || 0; save(); } }
-});
+  if (el.dataset.a === 'draft' && ev.type === 'change' && /^since:/.test(el.dataset.k)) render();
+}
+document.addEventListener('input', onField);
+document.addEventListener('change', onField);
+document.addEventListener('gesturestart', function (e) { e.preventDefault(); }, { passive: false });
+document.addEventListener('dblclick', function (e) { e.preventDefault(); }, { passive: false });
+window.addEventListener('scroll', function () { document.body.classList.toggle('scrolled', window.scrollY > (SUN.phPx || 300) - 60); }, { passive: true });
 try { window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function () { render(); }); } catch (e) {}
 setInterval(function () { if (!UI.stack.length && S) { var n = isNight(); if (n !== render._n) { render._n = n; render(); } } }, 60000);
 

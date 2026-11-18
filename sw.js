@@ -1,5 +1,5 @@
 /* Prelapse service worker: keeps the app working offline. Bump VERSION when you change any file. */
-var VERSION = 'prelapse-v1';
+var VERSION = 'prelapse-v2';
 var CORE = ['./', 'index.html', 'manifest.webmanifest', 'icons/icon.svg', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/apple-touch-icon.png'];
 
 self.addEventListener('install', function (e) {
